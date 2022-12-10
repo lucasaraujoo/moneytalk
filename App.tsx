@@ -20,10 +20,8 @@ import {
 
 import theme from './src/globals/styles/theme';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { AppRoutes } from './src/routes/app.routes';
-
-import { SignIn } from './src/screens/SignIn';
+import { Routes } from './src/routes';
+import { AuthProvider, useAuth } from './src/hooks/auth';
 
 
 export default function App() {
@@ -35,6 +33,7 @@ export default function App() {
     Poppins_700Bold
   });
 
+  const {userStorageLoading} = useAuth();
 
   useEffect(()=>{
     // set initial orientation
@@ -47,6 +46,7 @@ export default function App() {
     const subscription = ScreenOrientation.addOrientationChangeListener((evt)=>{
       setOrientation(evt.orientationInfo.orientation === 3 || evt.orientationInfo.orientation === 4);
     });
+
     // return a clean up function to unsubscribe from notifications
     return ()=>{
       ScreenOrientation.removeOrientationChangeListener(subscription);
@@ -54,22 +54,19 @@ export default function App() {
     
   }, []);
   
-  if(!fontsLoaded){
+  if(!fontsLoaded || userStorageLoading){
     return <AppLoading/>
   }
-
   
   return (
     <ThemeProvider theme={theme} >
       <SafeAreaView style={{flex:1}}>
         <StatusBar barStyle={'default'} backgroundColor={theme.colors.primary} />
-        <NavigationContainer >
-          {/* <AppRoutes orientationLandscape={orientationIsLandscape}/> */}
-          <SignIn/>
-        </NavigationContainer>
-        
+        {/* <AppRoutes orientationLandscape={orientationIsLandscape}/> */}
+        <AuthProvider>
+          <Routes orientationLandscape={orientationIsLandscape}/>
+        </AuthProvider>
       </SafeAreaView>
-  
     </ThemeProvider>
   )
 }

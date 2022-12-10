@@ -10,6 +10,7 @@ import uuid from 'react-native-uuid';
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
+import { useAuth } from "../../hooks/auth";
 import { AppRoutesParamList } from "../../routes/app.routes";
 import { Button } from "../../components/Form/Button";
 import { InputForm } from "../../components/Form/InputForm";
@@ -58,6 +59,8 @@ export function Register(){
     const [transactionType, setTransactionType] = useState('');
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
 
+    const {user} = useAuth();
+
     const [category, setCategory] = useState({
         key: 'category',
         name: 'Categoria'
@@ -103,12 +106,12 @@ export function Register(){
         }
 
         try {
-            const dataKey = '@moneytalk:transactions';
+            const dataKey = `@moneytalk:transactions_user:${user.id}`;
             const data = await AsyncStorage.getItem(dataKey);
             const currentData = data ? JSON.parse(data) : [];
             const dataFormatted = [ newTransaction, ...currentData];
-
-            await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted));
+            
+            await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted)); //usar mergeItem? 
 
             reset();
             setTransactionType('');

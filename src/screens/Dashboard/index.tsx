@@ -25,6 +25,7 @@ import {
     LoadContainer
 } from "./styles";
 import theme from "../../globals/styles/theme";
+import { useAuth } from "../../hooks/auth";
 
 export interface TransactionListProps extends TransactionCardProps{
     id : string;
@@ -48,17 +49,36 @@ interface HighlightDataProps {
 
 function getLastTransactionTypeDate(collection : TransactionListProps[] , type?: "up" | "down"){
     //Filtering and get max date by transaction type 
+    
+    
     let collectionFiltered = collection;
     if (type) {
         collectionFiltered = collection.filter((transaction ) => transaction.type === type);
     }
+
+    if (collectionFiltered.length === 0){
+        if (type){
+            return "(Sem registros)"
+        }else{
+            return new Date().toLocaleString(
+                'pt-BR', 
+                {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                });
+        } 
+    }
+
     const lastTransactionTypeDate  = 
     Math.max.apply(Math, collectionFiltered
     .map((transaction ) => new Date(transaction.date).getTime()));
+
+    console.log(collection)
     //Formatting timestamp
     return Intl.DateTimeFormat('pt-BR',{
         day: "2-digit",
-        month: "long",
+        month: "long"
     }).format(new Date(lastTransactionTypeDate));
 
 }
@@ -68,16 +88,20 @@ export function Dashboard({orientationLandscape } : DashboardProps){
     const [transactions, setTransactions] = useState<TransactionListProps[]>([]);
     const [hightlightData, setHighlightData ] = useState<HighlightDataProps>({} as HighlightDataProps);
 
+    const {signOut, user} = useAuth();
+
     let entriesTotal:number;
     let expensesTotal:number;
 
     async function loadtransactions(){
-        const dataKey = '@moneytalk:transactions';
+        const dataKey = `@moneytalk:transactions_user:${user.id}`;
         const response = await AsyncStorage.getItem(dataKey);
 
         const data =  response ? JSON.parse(response) : [];
+        
         entriesTotal = 0;
         expensesTotal = 0;
+        
         //Array mapping
         const transactionsFormatted : TransactionListProps[] = data
         .map((item : TransactionListProps) => {
@@ -145,15 +169,15 @@ export function Dashboard({orientationLandscape } : DashboardProps){
                 <Header topSize={orientationLandscape ? 'short' : 'full'}>
                     <UserInfo>
                         <Photo 
-                            source={{uri: 'https://avatars.githubusercontent.com/u/22358123?v=4' }}
+                            source={{uri: user.photo }}
                         />
                         <User>
                             <UserGreeting>Olá,</UserGreeting>
-                            <UserName>Lucas</UserName>
+                            <UserName>{user.name}</UserName>
                         </User>
                     </UserInfo>
                     <GestureHandlerRootView>
-                        <LogoutButton onPress={() => {console.log('Logout')}} >
+                        <LogoutButton onPress={signOut} >
                             <IconPower name="power" />
                         </LogoutButton>
                     </GestureHandlerRootView>

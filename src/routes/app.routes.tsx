@@ -24,7 +24,7 @@ export type AppRoutesParamList = {
 
 const { Navigator , Screen} = createBottomTabNavigator<AppRoutesParamList>();
 
-export function AppRoutes({...rest} : Props){
+export function AppRoutes({orientationLandscape} : Props){
 
     return(
         <Navigator
@@ -55,7 +55,7 @@ export function AppRoutes({...rest} : Props){
                     
                 }}
             >
-                {props => <Dashboard {...props} {...rest}  />}
+                {props => <Dashboard {...props} orientationLandscape={orientationLandscape} />}
             </Screen>
             <Screen 
                 name='Cadastrar' 

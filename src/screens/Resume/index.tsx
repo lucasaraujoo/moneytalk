@@ -13,6 +13,7 @@ import { HistoryCard } from "../../components/HistoryCard";
 import { categories } from "../../utils/categories";
 import { LoadContainer } from "../Dashboard/styles";
 
+import { useAuth } from "../../hooks/auth";
 
 import {
     Container, 
@@ -51,6 +52,8 @@ export function Resume(){
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [totalByCategories , setTotalByCategories] = useState<CategorySum[]>([]);
 
+    const {user} = useAuth();
+
     function handleDateChange(action: 'next' | 'prev'){
         if (action === 'next'){
             setSelectedDate(addMonths(selectedDate, 1));
@@ -62,7 +65,7 @@ export function Resume(){
     
     async function loadData(){
         setIsLoading(true);
-        const dataKey = '@moneytalk:transactions';
+        const dataKey = `@moneytalk:transactions_user:${user.id}`;
         const response = await AsyncStorage.getItem(dataKey);
         const responseFormatted = response ? JSON.parse(response) : [];
 
@@ -115,7 +118,7 @@ export function Resume(){
     return(
         <Container >
             <Header>
-                <Title>Resumo por categoria</Title>
+                <Title>Resumo de gastos por categoria</Title>
             </Header>
             {
                 isLoading ? 
