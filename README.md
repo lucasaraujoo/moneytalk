@@ -35,10 +35,13 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 Para instalar, siga estas etapas:
 
 
-Windows, Linux e macOS:
+1 - Instalar dependências do projeto no Windows, Linux e macOS:
 ```
 npm install
 ```
+
+2 - Renomear o arquivo .env.example para .env e adicionar as suas chaves de [configuração de autenticação do Google](https://docs.expo.dev/guides/authentication/#development-in-the-expo-go-app).
+
 
 ## ☕ Usando moneytalk
 
@@ -67,4 +70,4 @@ Como alternativa, consulte a documentação do GitHub em [como criar uma solicit
 
 Esse projeto está sob licença. Veja o arquivo [LICENÇA](LICENSE.md) para mais detalhes.
 
-[⬆ Voltar ao topo](#nome-do-projeto)<br>
+[⬆ Voltar ao topo](#moneytalk)<br>
